@@ -1,6 +1,6 @@
 <template>
-  <div class="board-tile" :style="{ backgroundColor: tileColor }" @click="printTile">
-    <p>{{tileType}}</p>
+  <div class="board-tile" :style="{ backgroundColor: tile.tileColor }" @click="setSelectedTile">
+    <p>{{tile.tileType}}</p>
   </div>
 </template>
 
@@ -22,12 +22,16 @@ export default {
   },
   data() {
     return {
-      tileType: this.getRandomTileType(1, 7),
-      tileColor: 'gray',
+      tile: {
+        tileType: this.getRandomTileType(1, 7),
+        tileColor: 'gray',
+        xPos: this.xPos,
+        yPos: this.yPos,
+      },
     };
   },
   mounted() {
-    this.tileColor = this.getTileColor(this.tileType);
+    this.tile.tileColor = this.getTileColor(this.tile.tileType);
   },
 };
 </script>

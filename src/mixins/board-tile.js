@@ -1,5 +1,15 @@
+import { mapGetters, mapActions } from 'vuex';
+
 export default {
+  computed: {
+    ...mapGetters([
+      'selectedTile',
+    ]),
+  },
   methods: {
+    ...mapActions([
+      'updateSelectedTile',
+    ]),
     getRandomTileType(i1, i2) {
       const min = i1;
       const max = i2 + 1;
@@ -36,9 +46,10 @@ export default {
 
       return color;
     },
-    printTile() {
+    setSelectedTile() {
+      this.updateSelectedTile(this.tile);
       // eslint-disable-next-line
-      console.log('[LAUREN] type:', this.tileType, 'x:', this.xPos, 'y:', this.yPos);
+      console.log('[LAUREN] selected tile:', this.selectedTile);
     },
   },
 };
