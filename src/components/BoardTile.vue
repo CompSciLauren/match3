@@ -20,18 +20,20 @@ export default {
       default: null,
     },
   },
-  data() {
-    return {
-      tile: {
-        tileType: this.getRandomTileType(1, 7),
-        tileColor: 'gray',
-        xPos: this.xPos,
-        yPos: this.yPos,
-      },
-    };
-  },
-  mounted() {
-    this.tile.tileColor = this.getTileColor(this.tile.tileType);
+  computed: {
+    tile() {
+      const tile = {};
+      if (this.allTiles.length > 0) {
+        const tiles = this.allTiles;
+        const myTile = tiles[this.xPos][this.yPos];
+        tile.tileId = myTile.tileId;
+        tile.tileType = myTile.tileType;
+        tile.tileColor = myTile.tileColor;
+        tile.xPos = this.xPos;
+        tile.yPos = this.yPos;
+      }
+      return tile;
+    },
   },
 };
 </script>

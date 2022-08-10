@@ -8,7 +8,7 @@ something like https://en.wikipedia.org/wiki/Bejeweled
 
 ### Actions
 
-* click on two adjascent tiles to swap
+* click on two adjacent tiles to swap
   * swap horizontal neighbors
   * swap vertical neighbors
   * can only swap if the result makes a match

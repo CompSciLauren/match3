@@ -3,12 +3,16 @@ import { mapGetters, mapActions } from 'vuex';
 export default {
   computed: {
     ...mapGetters([
+      'timeToSwap',
       'selectedTile',
+      'allTiles',
+      'individualTile',
     ]),
   },
   methods: {
     ...mapActions([
       'updateSelectedTile',
+      'resetAfterSwap',
     ]),
     getRandomTileType(i1, i2) {
       const min = i1;
@@ -48,8 +52,6 @@ export default {
     },
     setSelectedTile() {
       this.updateSelectedTile(this.tile);
-      // eslint-disable-next-line
-      console.log('[LAUREN] selected tile:', this.selectedTile);
     },
   },
 };
