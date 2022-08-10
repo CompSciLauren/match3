@@ -5,7 +5,7 @@ export default {
     ...mapGetters([
       'allTiles',
       'timeToSwap',
-      'selectedTile',
+      'firstSelectedTile',
       'secondSelectedTile',
     ]),
   },
@@ -17,15 +17,14 @@ export default {
     ]),
     createTiles() {
       const allTiles = [];
+      const boardLength = 8;
       let newRow;
-      let nextId = 0;
-      // eslint-disable-next-line no-plusplus
-      for (let i = 0; i < 8; i++) {
+      let nextTileId = 0;
+      for (let i = 0; i < boardLength; i += 1) {
         newRow = [];
-        // eslint-disable-next-line no-plusplus
-        for (let j = 0; j < 8; j++) {
-          newRow.push(this.createOneTile(nextId));
-          nextId += 1;
+        for (let j = 0; j < boardLength; j += 1) {
+          newRow.push(this.createOneTile(nextTileId));
+          nextTileId += 1;
         }
         allTiles.push(newRow);
       }
@@ -77,42 +76,25 @@ export default {
     },
     swapTwoTiles() {
       if (this.timeToSwap) {
-        // eslint-disable-next-line prefer-destructuring
-        const allTiles = this.allTiles;
-        const tileOne = this.selectedTile;
-        // eslint-disable-next-line
+        const { allTiles } = this;
+        const tileOne = this.firstSelectedTile;
         const tileTwo = this.secondSelectedTile;
-        const theTileOneIndex = this.search2DArray(allTiles, tileOne);
-        // eslint-disable-next-line
-        console.log('[LAUREN] tileIndex:', theTileOneIndex);
-        const theTileTwoIndex = this.search2DArray(allTiles, tileTwo);
+        const tileOneIndex = this.findIndexIn2DArray(allTiles, tileOne);
+        const tileTwoIndex = this.findIndexIn2DArray(allTiles, tileTwo);
 
-        const arr = allTiles;
-        const xPos = theTileOneIndex[0];
-        const yPos = theTileOneIndex[1];
-        const xPos2 = theTileTwoIndex[0];
-        const yPos2 = theTileTwoIndex[1];
+        const xPos = tileOneIndex[0];
+        const yPos = tileOneIndex[1];
+        const xPos2 = tileTwoIndex[0];
+        const yPos2 = tileTwoIndex[1];
 
-        arr[xPos][yPos] = tileTwo;
-        arr[xPos2][yPos2] = tileOne;
+        allTiles[xPos][yPos] = tileTwo;
+        allTiles[xPos2][yPos2] = tileOne;
 
-        this.initializeAllTiles(arr);
+        this.initializeAllTiles(allTiles);
 
         // unselect tiles
         this.resetAfterSwap();
       }
-    },
-    search2DArray(allTiles, aTile) {
-      let indexOfATile;
-      let currentArr;
-      for (let i = 0; i < 8; i += 1) {
-        currentArr = allTiles[i];
-        indexOfATile = currentArr.findIndex((tile) => tile.tileId === aTile.tileId);
-        if (indexOfATile !== -1) {
-          return [i, indexOfATile];
-        }
-      }
-      return -1;
     },
   },
   watch: {

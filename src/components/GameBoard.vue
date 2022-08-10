@@ -14,18 +14,17 @@
 <script>
 import { Options, Vue } from 'vue-class-component';
 import BoardRow from './BoardRow.vue';
+import CommonUtilsMixin from '../mixins/common-utils';
 import GameBoardMixin from '../mixins/game-board';
 
 @Options({
   name: 'GameBoard',
-  mixins: [GameBoardMixin],
+  mixins: [CommonUtilsMixin, GameBoardMixin],
   components: {
     BoardRow,
   },
   mounted() {
     this.initializeAllTiles(this.createTiles());
-    //  eslint-disable-next-line
-    console.log('[LAUREN] tiles init to:', this.allTiles);
   },
 })
 export default class HelloWorld extends Vue {}

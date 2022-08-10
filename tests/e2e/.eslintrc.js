@@ -9,5 +9,15 @@ module.exports = {
   rules: {
     strict: 'off',
     '@typescript-eslint/ban-ts-comment': 'off',
+    'no-param-reassign': [
+      'error',
+      {
+        props: true,
+        ignorePropertyModificationsFor: [
+          'state',
+        ],
+      },
+    ],
+    'no-console': 'off',
   },
 };

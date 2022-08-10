@@ -17,5 +17,15 @@ module.exports = {
     '@typescript-eslint',
   ],
   rules: {
+    'no-param-reassign': [
+      'error',
+      {
+        props: true,
+        ignorePropertyModificationsFor: [
+          'state',
+        ],
+      },
+    ],
+    'no-console': 'off',
   },
 };
