@@ -1,8 +1,11 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <h1>Lauren's Match3</h1>
-    <GameBoard />
+    <div>
+      <h1>Lauren's Match3</h1>
+    </div>
+    <div>
+      <GameBoard />
+    </div>
   </div>
 </template>
 
@@ -17,3 +20,13 @@ import GameBoard from '../components/GameBoard.vue';
 })
 export default class HomeView extends Vue {}
 </script>
+
+<style scoped>
+.home {
+  background-color: lightblue;
+  height: 720px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding-top: 100px;
+}
+</style>

@@ -45,34 +45,41 @@ export default {
     },
     getTileColor(tileType) {
       let color = null;
+      let src = '';
 
       switch (tileType) {
         case 1:
           color = 'red';
+          src = '../assets/jewels/axolotl.jpeg';
           break;
         case 2:
           color = 'orange';
+          src = '../assets/jewels/bee.png';
           break;
         case 3:
           color = 'yellow';
+          src = '../assets/jewels/bunny.jpeg';
           break;
         case 4:
           color = 'lightgreen';
+          src = '../assets/jewels/butterfly.png';
           break;
         case 5:
           color = 'lightblue';
+          src = '../assets/jewels/fish.png';
           break;
         case 6:
           color = 'violet';
-          break;
-        case 7:
-          color = 'cyan';
+          src = '../assets/jewels/frog.jpeg';
           break;
         default:
-          color = 'brown';
+          color = 'cyan';
+          src = '../assets/jewels/snake.webp';
       }
 
-      return color;
+      console.log('[LAUREN] 1:', src, color);
+      return src;
+      // return color;
     },
     performSwap() {
       const { allTiles } = this;

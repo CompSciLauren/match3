@@ -1,6 +1,6 @@
 <template>
-  <div class="board-tile" :style="{ backgroundColor: tile.tileColor }" @click="setSelectedTile">
-    <p>{{tile.tileType}}</p>
+  <div class="board-tile" @click="setSelectedTile">
+    <img alt="Jewel" :src="tile.tileColor" width="50" height="50">
   </div>
 </template>
 
@@ -40,9 +40,12 @@ export default {
 
 <style scoped>
 .board-tile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 75px;
   height: 75px;
-  background-color: darkgray;
+  background-color: white;
   border: 1px solid black;
 }
 
