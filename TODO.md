@@ -4,13 +4,13 @@
 
 something like https://en.wikipedia.org/wiki/Bejeweled
 
-8x8 grid composed of multi-value tiles
+8x8 grid composed of multi-value tiles - DONE
 
 ### Actions
 
 * click on two adjacent tiles to swap
-  * swap horizontal neighbors
-  * swap vertical neighbors
+  * swap horizontal neighbors - DONE
+  * swap vertical neighbors - DONE
   * can only swap if the result makes a match
 
 ### Goals

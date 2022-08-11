@@ -74,33 +74,56 @@ export default {
 
       return color;
     },
-    swapTwoTiles() {
-      if (this.timeToSwap) {
-        const { allTiles } = this;
-        const tileOne = this.firstSelectedTile;
-        const tileTwo = this.secondSelectedTile;
-        const tileOneIndex = this.findIndexIn2DArray(allTiles, tileOne);
-        const tileTwoIndex = this.findIndexIn2DArray(allTiles, tileTwo);
+    performSwap() {
+      const { allTiles } = this;
+      const tileOne = this.firstSelectedTile;
+      const tileTwo = this.secondSelectedTile;
+      const tileOneIndex = this.findIndexIn2DArray(allTiles, tileOne);
+      const tileTwoIndex = this.findIndexIn2DArray(allTiles, tileTwo);
 
-        const xPos = tileOneIndex[0];
-        const yPos = tileOneIndex[1];
-        const xPos2 = tileTwoIndex[0];
-        const yPos2 = tileTwoIndex[1];
+      // coords of first tile
+      const xPos = tileOneIndex[0];
+      const yPos = tileOneIndex[1];
 
-        allTiles[xPos][yPos] = tileTwo;
-        allTiles[xPos2][yPos2] = tileOne;
+      // coords of second tile
+      const xPos2 = tileTwoIndex[0];
+      const yPos2 = tileTwoIndex[1];
 
-        this.initializeAllTiles(allTiles);
-
-        // unselect tiles
-        this.resetAfterSwap();
+      if (this.isValidSwap(xPos, yPos, xPos2, yPos2)) {
+        this.swapTwoTiles(tileOne, xPos, yPos, tileTwo, xPos2, yPos2);
       }
+
+      // unselect tiles
+      this.resetAfterSwap();
+    },
+    isValidSwap(xPos, yPos, xPos2, yPos2) {
+      const invalidSameTile = xPos === xPos2 && yPos === yPos2;
+      const invalidTooFarAway = Math.abs(xPos - xPos2) > 1 || Math.abs(yPos - yPos2) > 1;
+      const invalidTwoXAndTwoYNotSame = xPos !== xPos2 && yPos !== yPos2;
+
+      const invalid = invalidSameTile || invalidTooFarAway || invalidTwoXAndTwoYNotSame;
+
+      if (invalid) {
+        return false;
+      }
+
+      return true;
+    },
+    swapTwoTiles(tileOne, xPos, yPos, tileTwo, xPos2, yPos2) {
+      const { allTiles } = this;
+
+      // swap the two tiles
+      allTiles[xPos][yPos] = tileTwo;
+      allTiles[xPos2][yPos2] = tileOne;
+
+      // initialize game board again
+      this.initializeAllTiles(allTiles);
     },
   },
   watch: {
-    timeToSwap(val) {
-      if (val === true) {
-        this.swapTwoTiles();
+    timeToSwap(swap) {
+      if (swap === true) {
+        this.performSwap();
       }
     },
   },
