@@ -5,13 +5,13 @@ export default createStore({
     allTiles: [],
     firstSelectedTile: null,
     secondSelectedTile: null,
-    timeToSwap: false,
+    timeToPerformSwap: false,
   },
   getters: {
     allTiles: (state) => state.allTiles,
     firstSelectedTile: (state) => state.firstSelectedTile,
     secondSelectedTile: (state) => state.secondSelectedTile,
-    timeToSwap: (state) => state.timeToSwap,
+    timeToPerformSwap: (state) => state.timeToPerformSwap,
     individualTile: (state) => (xPos: number) => (yPos: number) => state.allTiles[xPos][yPos],
   },
   mutations: {
@@ -20,13 +20,13 @@ export default createStore({
     },
     RESET_TILES(state) {
       state.firstSelectedTile = null;
-      state.timeToSwap = false;
+      state.timeToPerformSwap = false;
     },
     UPDATE_SELECTED_TILE(state, tile) {
       // one tile already selected, so prepare to swap the tiles
       if (state.firstSelectedTile) {
         state.secondSelectedTile = tile;
-        state.timeToSwap = true;
+        state.timeToPerformSwap = true;
       } else {
         state.firstSelectedTile = tile;
       }

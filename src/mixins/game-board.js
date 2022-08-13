@@ -4,7 +4,7 @@ export default {
   computed: {
     ...mapGetters([
       'allTiles',
-      'timeToSwap',
+      'timeToPerformSwap',
       'firstSelectedTile',
       'secondSelectedTile',
     ]),
@@ -44,42 +44,32 @@ export default {
       return Math.floor(Math.random(min, max) * (max - min) + min);
     },
     getTileColor(tileType) {
-      let color = null;
       let src = '';
 
       switch (tileType) {
         case 1:
-          color = 'red';
           src = '../assets/jewels/axolotl.jpeg';
           break;
         case 2:
-          color = 'orange';
           src = '../assets/jewels/bee.png';
           break;
         case 3:
-          color = 'yellow';
           src = '../assets/jewels/bunny.jpeg';
           break;
         case 4:
-          color = 'lightgreen';
           src = '../assets/jewels/butterfly.png';
           break;
         case 5:
-          color = 'lightblue';
           src = '../assets/jewels/fish.png';
           break;
         case 6:
-          color = 'violet';
           src = '../assets/jewels/frog.jpeg';
           break;
         default:
-          color = 'cyan';
           src = '../assets/jewels/snake.webp';
       }
 
-      console.log('[LAUREN] 1:', src, color);
       return src;
-      // return color;
     },
     performSwap() {
       const { allTiles } = this;
@@ -110,11 +100,7 @@ export default {
 
       const invalid = invalidSameTile || invalidTooFarAway || invalidTwoXAndTwoYNotSame;
 
-      if (invalid) {
-        return false;
-      }
-
-      return true;
+      return !invalid;
     },
     swapTwoTiles(tileOne, xPos, yPos, tileTwo, xPos2, yPos2) {
       const { allTiles } = this;
@@ -126,9 +112,48 @@ export default {
       // initialize game board again
       this.initializeAllTiles(allTiles);
     },
+    findAllMatches() {
+      const horizMatches = this.findAllHorizMatches();
+      const vertMatches = this.findVertMatches();
+
+      console.log('[LAUREN] all matches:', [...horizMatches, ...vertMatches]);
+
+      return [...horizMatches, ...vertMatches];
+    },
+    findAllHorizMatches() {
+      const allHorizMatches = [];
+      let currentMatchSet = [];
+      const { allTiles } = this;
+      let tileTypeToMatch;
+      for (let i = 0; i < 8; i += 1) {
+        currentMatchSet = [];
+        tileTypeToMatch = allTiles[i][0].tileType;
+        currentMatchSet.push(allTiles[i][0].tileId);
+        for (let j = 1; j < 8; j += 1) {
+          if (allTiles[i][j].tileType === tileTypeToMatch) {
+            currentMatchSet.push(allTiles[i][j].tileId);
+          } else {
+            if (currentMatchSet.length >= 3) {
+              allHorizMatches.push(currentMatchSet);
+            }
+            currentMatchSet = [];
+            currentMatchSet.push(allTiles[i][j].tileId);
+            tileTypeToMatch = allTiles[i][j].tileType;
+          }
+        }
+      }
+
+      return allHorizMatches;
+    },
+    findVertMatches() {
+      // TODO: Able to find all vertical matches
+      const allVertMatches = [];
+
+      return allVertMatches;
+    },
   },
   watch: {
-    timeToSwap(swap) {
+    timeToPerformSwap(swap) {
       if (swap === true) {
         this.performSwap();
       }
