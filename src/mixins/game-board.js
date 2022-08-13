@@ -146,8 +146,27 @@ export default {
       return allHorizMatches;
     },
     findVertMatches() {
-      // TODO: Able to find all vertical matches
       const allVertMatches = [];
+      let currentMatchSet = [];
+      const { allTiles } = this;
+      let tileTypeToMatch;
+      for (let i = 0; i < 8; i += 1) {
+        currentMatchSet = [];
+        tileTypeToMatch = allTiles[0][i].tileType;
+        currentMatchSet.push(allTiles[0][i].tileId);
+        for (let j = 1; j < 8; j += 1) {
+          if (allTiles[j][i].tileType === tileTypeToMatch) {
+            currentMatchSet.push(allTiles[j][i].tileId);
+          } else {
+            if (currentMatchSet.length >= 3) {
+              allVertMatches.push(currentMatchSet);
+            }
+            currentMatchSet = [];
+            currentMatchSet.push(allTiles[j][i].tileId);
+            tileTypeToMatch = allTiles[j][i].tileType;
+          }
+        }
+      }
 
       return allVertMatches;
     },

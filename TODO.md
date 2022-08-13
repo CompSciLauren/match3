@@ -53,3 +53,10 @@ something like https://en.wikipedia.org/wiki/Bejeweled
 
 * Themed
 * P2W (lol)
+
+## Just Finished / Next to Work On
+
+* Just Finished: At start of game, find all horizontal and vertical matches.
+* Next to Work On:
+  * All tiles that are part of matches are highlighted on screen (some sort of obv css styling to differentiate them; thicker borders or something).
+  * Only allow a swap if it results in a match
