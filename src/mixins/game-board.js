@@ -44,40 +44,31 @@ export default {
       return Math.floor(Math.random(min, max) * (max - min) + min);
     },
     getTileColor(tileType) {
-      let color = null;
       let src = '';
 
       switch (tileType) {
         case 1:
-          color = 'red';
           src = '../assets/jewels/axolotl.jpeg';
           break;
         case 2:
-          color = 'orange';
           src = '../assets/jewels/bee.png';
           break;
         case 3:
-          color = 'yellow';
           src = '../assets/jewels/bunny.jpeg';
           break;
         case 4:
-          color = 'lightgreen';
           src = '../assets/jewels/butterfly.png';
           break;
         case 5:
-          color = 'lightblue';
           src = '../assets/jewels/fish.png';
           break;
         case 6:
-          color = 'violet';
           src = '../assets/jewels/frog.jpeg';
           break;
         default:
-          color = 'cyan';
           src = '../assets/jewels/snake.webp';
       }
 
-      console.log('[LAUREN] 1:', src, color);
       return src;
       // return color;
     },
@@ -104,6 +95,12 @@ export default {
       this.resetAfterSwap();
     },
     isValidSwap(xPos, yPos, xPos2, yPos2) {
+      const tilePositionsGood = this.tilesAreNextToEachOtherHorizOrVert(xPos, yPos, xPos2, yPos2);
+      // const swapResultsInMatch3OrMore = this.tileSwapResultsInAMatch(xPos, yPos, xPos2, yPos2);
+
+      return tilePositionsGood;
+    },
+    tilesAreNextToEachOtherHorizOrVert(xPos, yPos, xPos2, yPos2) {
       const invalidSameTile = xPos === xPos2 && yPos === yPos2;
       const invalidTooFarAway = Math.abs(xPos - xPos2) > 1 || Math.abs(yPos - yPos2) > 1;
       const invalidTwoXAndTwoYNotSame = xPos !== xPos2 && yPos !== yPos2;
@@ -116,15 +113,68 @@ export default {
 
       return true;
     },
+    tileSwapResultsInAMatch(allTiles) {
+      console.log('[LAUREN] 1:');
+      return this.findHorizontalMatch(allTiles) || this.findVerticalMatch();
+    },
+    findHorizontalMatch(allTiles) {
+      console.log('[LAUREN] 1.5:');
+      let tileTypeToMatch;
+      let currentMatchCount;
+      for (let i = 0; i < 8; i += 1) {
+        currentMatchCount = 0;
+        for (let j = 0; j < 8; j += 1) {
+          if (currentMatchCount === 0) {
+            tileTypeToMatch = allTiles[i][j].tileType;
+            currentMatchCount += 1;
+            console.log('[LAUREN] NEW TO MATCH tileTypeToMatch:', tileTypeToMatch, 'with:', allTiles[i][j].tileType, 'at:', i, j);
+          } else if (currentMatchCount >= 3) {
+            console.log('[LAUREN] 3 IN A ROW match count is:', currentMatchCount);
+            return true;
+          } else if (allTiles[i][j].tileType === tileTypeToMatch) {
+            console.log('[LAUREN] MATCH tileTypeToMatch:', tileTypeToMatch, 'with:', allTiles[i][j].tileType, 'at:', i, j);
+            currentMatchCount += 1;
+          } else {
+            console.log('[LAUREN] NOT A MATCH tileTypeToMatch:', tileTypeToMatch, 'with:', allTiles[i][j].tileType, 'at:', i, j);
+            tileTypeToMatch = allTiles[i][j].tileType;
+            currentMatchCount = 1;
+          }
+        }
+      }
+      console.log('[LAUREN] returning false:');
+      return false;
+    },
+    findVerticalMatch() {
+      // let tileTypeToMatch;
+      // let currentMatchCount;
+      // for (let i = 0; i < 8; i += 1) {
+      //   currentMatchCount = 0;
+      //   for (let j = 0; j < 8; j += 2) {
+      //     if (currentMatchCount === 0) {
+      //       tileTypeToMatch = allTiles[i][j].tileType;
+      //     } else if (currentMatchCount >= 3) {
+      //       return true;
+      //     } else if (allTiles[i][j].tileType === tileTypeToMatch) {
+      //       currentMatchCount += 1;
+      //     } else {
+      //       currentMatchCount = 0;
+      //     }
+      //   }
+      // }
+      return false;
+    },
     swapTwoTiles(tileOne, xPos, yPos, tileTwo, xPos2, yPos2) {
       const { allTiles } = this;
-
-      // swap the two tiles
+      const allTilesWithPendingSwap = [...allTiles];
       allTiles[xPos][yPos] = tileTwo;
       allTiles[xPos2][yPos2] = tileOne;
 
-      // initialize game board again
-      this.initializeAllTiles(allTiles);
+      if (!this.tileSwapResultsInAMatch(allTilesWithPendingSwap)) {
+        console.log('[LAUREN] 2:');
+        // unswap the two tiles
+        allTiles[xPos][yPos] = tileOne;
+        allTiles[xPos2][yPos2] = tileTwo;
+      }
     },
   },
   watch: {
