@@ -25,7 +25,7 @@ import GameBoardMixin from '../mixins/game-board';
   },
   mounted() {
     this.initializeAllTiles(this.createTiles());
-    this.findAllMatches();
+    this.handleAllMatches();
   },
 })
 export default class HelloWorld extends Vue {}

@@ -11,11 +11,11 @@ something like https://en.wikipedia.org/wiki/Bejeweled
 * click on two adjacent tiles to swap
   * swap horizontal neighbors - DONE
   * swap vertical neighbors - DONE
-  * can only swap if the result makes a match
+  * can only swap if the result makes a match - DONE (poorly)
 
 ### Goals
 
-* make connecting lines (horizontal or vertical) of 3 or more matching tiles
+* make connecting lines (horizontal or vertical) of 3 or more matching tiles - DONE
 
 ### Mutations
 

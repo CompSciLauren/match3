@@ -86,14 +86,18 @@ export default {
       const xPos2 = tileTwoIndex[0];
       const yPos2 = tileTwoIndex[1];
 
-      if (this.isValidSwap(xPos, yPos, xPos2, yPos2)) {
+      if (this.isValidSwap(tileOne, xPos, yPos, tileTwo, xPos2, yPos2)) {
         this.swapTwoTiles(tileOne, xPos, yPos, tileTwo, xPos2, yPos2);
       }
 
       // unselect tiles
       this.resetAfterSwap();
     },
-    isValidSwap(xPos, yPos, xPos2, yPos2) {
+    isValidSwap(tileOne, xPos, yPos, tileTwo, xPos2, yPos2) {
+      // eslint-disable-next-line max-len
+      return this.isValidSwapBasedOnDistance(xPos, yPos, xPos2, yPos2) && this.isValidSwapBasedOnMakingAMatch(tileOne, xPos, yPos, tileTwo, xPos2, yPos2);
+    },
+    isValidSwapBasedOnDistance(xPos, yPos, xPos2, yPos2) {
       const invalidSameTile = xPos === xPos2 && yPos === yPos2;
       const invalidTooFarAway = Math.abs(xPos - xPos2) > 1 || Math.abs(yPos - yPos2) > 1;
       const invalidTwoXAndTwoYNotSame = xPos !== xPos2 && yPos !== yPos2;
@@ -101,6 +105,36 @@ export default {
       const invalid = invalidSameTile || invalidTooFarAway || invalidTwoXAndTwoYNotSame;
 
       return !invalid;
+    },
+    isValidSwapBasedOnMakingAMatch(tileOne, xPos, yPos, tileTwo, xPos2, yPos2) {
+      const totalCurrentMatches = this.handleAllMatches().length;
+      console.log('[LAUREN] totalCurrentMatches:', totalCurrentMatches);
+
+      // test swap to find if it increases the match count
+
+      const { allTiles } = this;
+
+      // swap the two tiles
+      allTiles[xPos][yPos] = tileTwo;
+      allTiles[xPos2][yPos2] = tileOne;
+
+      // initialize game board again
+      this.initializeAllTiles(allTiles);
+
+      // check count now
+      const totalCurrentMatches2 = this.handleAllMatches().length;
+      console.log('[LAUREN] totalCurrentMatches2:', totalCurrentMatches2);
+
+      // revert change once done testing (terrible, rewrite this later)
+
+      // swap the two tiles
+      allTiles[xPos][yPos] = tileOne;
+      allTiles[xPos2][yPos2] = tileTwo;
+
+      // initialize game board again
+      this.initializeAllTiles(allTiles);
+
+      return totalCurrentMatches2 > totalCurrentMatches;
     },
     swapTwoTiles(tileOne, xPos, yPos, tileTwo, xPos2, yPos2) {
       const { allTiles } = this;
@@ -112,13 +146,19 @@ export default {
       // initialize game board again
       this.initializeAllTiles(allTiles);
     },
-    findAllMatches() {
+    handleAllMatches() {
       const horizMatches = this.findAllHorizMatches();
       const vertMatches = this.findVertMatches();
+      const allMatches = [...horizMatches, ...vertMatches];
 
-      console.log('[LAUREN] all matches:', [...horizMatches, ...vertMatches]);
+      console.log('[LAUREN] all matches:', allMatches, '\ntotal:', allMatches.length);
 
-      return [...horizMatches, ...vertMatches];
+      this.clearMatches(allMatches);
+
+      return allMatches;
+    },
+    clearMatches(matches) {
+      console.log('[LAUREN] hi', matches);
     },
     findAllHorizMatches() {
       const allHorizMatches = [];
