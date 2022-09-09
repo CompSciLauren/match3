@@ -11,7 +11,7 @@ something like https://en.wikipedia.org/wiki/Bejeweled
 * click on two adjacent tiles to swap
   * swap horizontal neighbors - DONE
   * swap vertical neighbors - DONE
-  * can only swap if the result makes a match - DONE (poorly)
+  * can only swap if the result makes a match - DONE (poorly - buggy?)
 
 ### Goals
 
@@ -19,7 +19,7 @@ something like https://en.wikipedia.org/wiki/Bejeweled
 
 ### Mutations
 
-* matches disappear
+* matches disappear - WIP
 * tiles fall to fill gaps
 * new tiles fill from the top to fill up the grid
 
@@ -39,9 +39,9 @@ something like https://en.wikipedia.org/wiki/Bejeweled
 
 ### Milestones
 
-* board displays
-* can swap tiles
-* matches are detected
+* board displays - DONE
+* can swap tiles - DONE
+* matches are detected - DONE
 * matches are removed
 * board falls into gaps
 * board fills in top

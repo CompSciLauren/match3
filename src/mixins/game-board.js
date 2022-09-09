@@ -33,7 +33,7 @@ export default {
     createOneTile(id) {
       const newTile = {};
       newTile.tileType = this.getRandomTileType(1, 7);
-      newTile.tileColor = this.getTileColor(newTile.tileType);
+      newTile.tileIcon = this.getTileIcon(newTile.tileType);
       newTile.tileId = id;
 
       return newTile;
@@ -43,7 +43,7 @@ export default {
       const max = i2 + 1;
       return Math.floor(Math.random(min, max) * (max - min) + min);
     },
-    getTileColor(tileType) {
+    getTileIcon(tileType) {
       let src = '';
 
       switch (tileType) {
@@ -65,8 +65,11 @@ export default {
         case 6:
           src = '../assets/jewels/frog.jpeg';
           break;
-        default:
+        case 7:
           src = '../assets/jewels/snake.webp';
+          break;
+        default:
+          src = ''; // empty tile - temporary state
       }
 
       return src;
