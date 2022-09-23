@@ -1,6 +1,6 @@
 <template>
   <div class="board-tile" @click="setSelectedTile">
-    <img alt="Jewel" :src="tile.tileIcon" width="50" height="50">
+    <img v-if="tile.tileIcon !== ''" alt="Jewel" :src="tile.tileIcon" width="50" height="50">
   </div>
 </template>
 
@@ -27,6 +27,7 @@ export default {
         const tiles = this.allTiles;
         const myTile = tiles[this.xPos][this.yPos];
         tile.tileId = myTile.tileId;
+        tile.tilePosId = myTile.tilePosId;
         tile.tileType = myTile.tileType;
         tile.tileIcon = myTile.tileIcon;
         tile.xPos = this.xPos;

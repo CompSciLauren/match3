@@ -7,6 +7,7 @@ export default {
       'timeToPerformSwap',
       'firstSelectedTile',
       'secondSelectedTile',
+      'individualTile',
     ]),
   },
   methods: {
@@ -35,6 +36,7 @@ export default {
       newTile.tileType = this.getRandomTileType(1, 7);
       newTile.tileIcon = this.getTileIcon(newTile.tileType);
       newTile.tileId = id;
+      newTile.tilePosId = id;
 
       return newTile;
     },
@@ -142,9 +144,16 @@ export default {
     swapTwoTiles(tileOne, xPos, yPos, tileTwo, xPos2, yPos2) {
       const { allTiles } = this;
 
+      const tileOneId = tileOne.tileId;
+      const tileTwoId = tileTwo.tileId;
+
       // swap the two tiles
       allTiles[xPos][yPos] = tileTwo;
       allTiles[xPos2][yPos2] = tileOne;
+
+      // swap their IDs (two tiles should swap everything except the tile ID which relates to board position)
+      allTiles[xPos][yPos].tilePosId = tileOneId;
+      allTiles[xPos2][yPos2].tilePosId = tileTwoId;
 
       // initialize game board again
       this.initializeAllTiles(allTiles);
@@ -154,14 +163,59 @@ export default {
       const vertMatches = this.findVertMatches();
       const allMatches = [...horizMatches, ...vertMatches];
 
-      console.log('[LAUREN] all matches:', allMatches, '\ntotal:', allMatches.length);
+      console.log('[LAUREN] NEW MATCHES FOUND:', allMatches, '\nTOTAL:', allMatches.length);
 
-      this.clearMatches(allMatches);
+      if (allMatches.length > 0) {
+        console.log('[LAUREN] ====GETTING READY TO REFRESH BOARD====');
+        setTimeout(() => { this.clearMatches(allMatches); }, 5000);
+        setTimeout(() => { this.replaceMatchedTiles(allMatches); }, 5000);
+      }
 
       return allMatches;
     },
     clearMatches(matches) {
-      console.log('[LAUREN] hi', matches);
+      console.log('[LAUREN] will CLEAR these matches', matches);
+      const { allTiles } = this;
+      for (let i = 0; i < matches.length; i += 1) {
+        for (let j = 0; j < 3; j += 1) {
+          const currentMatchedTile = this.individualTile(matches[i][j]);
+          const currentXPos = currentMatchedTile[1];
+          const currentYPos = currentMatchedTile[2];
+          console.log('[LAUREN] a matched tile: ', currentMatchedTile);
+
+          // clear out the tile
+          allTiles[currentXPos][currentYPos].tileType = -1;
+          allTiles[currentXPos][currentYPos].tileIcon = '';
+
+          console.log('[LAUREN] cleared tiles');
+
+          // initialize game board again
+          this.initializeAllTiles(allTiles);
+        }
+      }
+    },
+    replaceMatchedTiles(matches) {
+      console.log('[LAUREN] will REPLACE these matches', matches);
+      const { allTiles } = this;
+      for (let i = 0; i < matches.length; i += 1) {
+        for (let j = 0; j < 3; j += 1) {
+          const currentMatchedTile = this.individualTile(matches[i][j]);
+          const currentXPos = currentMatchedTile[1];
+          const currentYPos = currentMatchedTile[2];
+          console.log('[LAUREN] a matched tile: ', currentMatchedTile);
+
+          // replace the tile
+          const newTileType = this.getRandomTileType(1, 7);
+          allTiles[currentXPos][currentYPos].tileType = newTileType;
+          allTiles[currentXPos][currentYPos].tileIcon = this.getTileIcon(newTileType);
+
+          // initialize game board again
+          this.initializeAllTiles(allTiles);
+
+          // repeat the process of checking for and handling matches
+          this.handleAllMatches();
+        }
+      }
     },
     findAllHorizMatches() {
       const allHorizMatches = [];

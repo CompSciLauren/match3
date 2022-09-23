@@ -12,7 +12,19 @@ export default createStore({
     firstSelectedTile: (state) => state.firstSelectedTile,
     secondSelectedTile: (state) => state.secondSelectedTile,
     timeToPerformSwap: (state) => state.timeToPerformSwap,
-    individualTile: (state) => (xPos: number) => (yPos: number) => state.allTiles[xPos][yPos],
+    individualTile: (state) => (tileId: number) => {
+      for (let i = 0; i < 8; i += 1) {
+        for (let j = 0; j < 8; j += 1) {
+          // eslint-disable-next-line dot-notation
+          if (state.allTiles[i][j]['tileId'] === tileId) {
+            // eslint-disable-next-line dot-notation
+            return [state.allTiles[i][j], i, j];
+          }
+        }
+      }
+
+      return {};
+    },
   },
   mutations: {
     INIT_ALL_TILES(state, tiles) {

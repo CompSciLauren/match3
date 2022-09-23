@@ -20,6 +20,7 @@ something like https://en.wikipedia.org/wiki/Bejeweled
 ### Mutations
 
 * matches disappear - WIP
+  * TODO: Fix bug with which tiles are refreshing on successful match
 * tiles fall to fill gaps
 * new tiles fill from the top to fill up the grid
 
