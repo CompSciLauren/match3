@@ -8,6 +8,7 @@ export default {
       'firstSelectedTile',
       'secondSelectedTile',
       'individualTile',
+      'individualTileByPosId',
     ]),
   },
   methods: {
@@ -151,7 +152,7 @@ export default {
       allTiles[xPos][yPos] = tileTwo;
       allTiles[xPos2][yPos2] = tileOne;
 
-      // swap their IDs (two tiles should swap everything except the tile ID which relates to board position)
+      // swap their pos IDs (two tiles should swap everything except the tile pos ID which relates to board position)
       allTiles[xPos][yPos].tilePosId = tileOneId;
       allTiles[xPos2][yPos2].tilePosId = tileTwoId;
 
@@ -160,110 +161,226 @@ export default {
     },
     handleAllMatches() {
       const horizMatches = this.findAllHorizMatches();
-      const vertMatches = this.findVertMatches();
+      const vertMatches = this.findAllVertMatches();
       const allMatches = [...horizMatches, ...vertMatches];
 
-      console.log('[LAUREN] NEW MATCHES FOUND:', allMatches, '\nTOTAL:', allMatches.length);
+      console.log('[LAUREN] NEW MATCHES FOUND?:', allMatches, '\nTOTAL:', allMatches.length);
 
       if (allMatches.length > 0) {
-        console.log('[LAUREN] ====GETTING READY TO REFRESH BOARD====');
-        setTimeout(() => { this.clearMatches(allMatches); }, 5000);
-        setTimeout(() => { this.replaceMatchedTiles(allMatches); }, 5000);
+        setTimeout(() => {
+          console.log('[LAUREN] ====GETTING READY TO REFRESH BOARD====');
+          this.clearMatches(allMatches);
+        }, 5000);
       }
 
       return allMatches;
     },
     clearMatches(matches) {
-      console.log('[LAUREN] will CLEAR these matches', matches);
+      console.log('[LAUREN] CLEAR matches:', matches);
       const { allTiles } = this;
       for (let i = 0; i < matches.length; i += 1) {
-        for (let j = 0; j < 3; j += 1) {
+        const currentMatchSize = matches[i].length;
+        for (let j = 0; j < currentMatchSize; j += 1) {
           const currentMatchedTile = this.individualTile(matches[i][j]);
           const currentXPos = currentMatchedTile[1];
           const currentYPos = currentMatchedTile[2];
-          console.log('[LAUREN] a matched tile: ', currentMatchedTile);
 
           // clear out the tile
           allTiles[currentXPos][currentYPos].tileType = -1;
           allTiles[currentXPos][currentYPos].tileIcon = '';
 
-          console.log('[LAUREN] cleared tiles');
-
           // initialize game board again
           this.initializeAllTiles(allTiles);
         }
       }
+
+      const listOfBlankTilesDescOrder = [].concat(...matches).sort((a, b) => b - a);
+      this.replaceMatchedTiles(listOfBlankTilesDescOrder);
+    },
+    findUpperTile(tileId) {
+      // const { allTiles } = this;
+      const tile = this.individualTile(tileId);
+      const upperTilePos = tile[0].tilePosId - 8;
+      if (upperTilePos >= 0) {
+        return this.individualTileByPosId(upperTilePos);
+      }
+      return [];
+    },
+    moveTile(tileToMove, emptyTileToReplace) {
+      const { allTiles } = this;
+
+      // TODO: Figure out why this isn't returning what I expect (getting -1)
+      const tileOneIndex = this.findIndexIn2DArray(allTiles, tileToMove);
+      const tileTwoIndex = this.findIndexIn2DArray(allTiles, emptyTileToReplace);
+
+      console.log('[LAUREN] tileOneIndex:', tileOneIndex, '\ntileTwoIndex:', tileTwoIndex);
+
+      // coords of first tile
+      const xPos = tileOneIndex[0];
+      const yPos = tileOneIndex[1];
+
+      // coords of second tile
+      const xPos2 = tileTwoIndex[0];
+      const yPos2 = tileTwoIndex[1];
+
+      console.log('[LAUREN] SWAP params:', tileToMove, xPos, yPos, emptyTileToReplace, xPos2, yPos2);
+      this.swapTwoTiles(tileToMove, xPos, yPos, emptyTileToReplace, xPos2, yPos2);
+    },
+    replaceTile(emptyTileId) {
+      console.log('[LAUREN] REPLACE tile with ID:', emptyTileId);
+      const emptyTile = this.individualTile(emptyTileId);
+      const nextTileAboveEmptyTile = this.findUpperTile(emptyTileId);
+      if (nextTileAboveEmptyTile.length > 0) {
+        // a tile spot on the board was found
+        if (nextTileAboveEmptyTile.tileType === -1) {
+          // is an empty tile
+          // TODO: loop again and find next upper tile
+        } else {
+          // is not an empty tile
+          this.moveTile(nextTileAboveEmptyTile, emptyTile);
+        }
+      } else {
+        // this must be a tile on the top row
+      }
+      console.log('[LAUREN] nextRealTileAboveEmptyTile:', nextTileAboveEmptyTile);
     },
     replaceMatchedTiles(matches) {
-      console.log('[LAUREN] will REPLACE these matches', matches);
-      const { allTiles } = this;
-      for (let i = 0; i < matches.length; i += 1) {
-        for (let j = 0; j < 3; j += 1) {
-          const currentMatchedTile = this.individualTile(matches[i][j]);
-          const currentXPos = currentMatchedTile[1];
-          const currentYPos = currentMatchedTile[2];
-          console.log('[LAUREN] a matched tile: ', currentMatchedTile);
+      console.log('[LAUREN] REPLACE matches', matches);
+      const tilesToReplace = matches;
 
-          // replace the tile
-          const newTileType = this.getRandomTileType(1, 7);
-          allTiles[currentXPos][currentYPos].tileType = newTileType;
-          allTiles[currentXPos][currentYPos].tileIcon = this.getTileIcon(newTileType);
+      // while (tilesToReplace.length > 0) {
+      this.replaceTile(tilesToReplace[0]);
+      // }
 
-          // initialize game board again
-          this.initializeAllTiles(allTiles);
+      // initialize game board again
+      // this.initializeAllTiles(allTiles);
 
-          // repeat the process of checking for and handling matches
-          this.handleAllMatches();
-        }
+      // repeat the process of checking for and handling matches
+      // this.handleAllMatches();
+    },
+    // replaceMatchedTiles(matches) {
+    //   // TODO: appears to work up to the point of this replacing step.
+    //   // TODO: this replacing step tho introduces the frequent replacing of tiles when it should not.
+    //   console.log('[LAUREN] REPLACE matches', matches);
+    //   const { allTiles } = this;
+    //   for (let i = 0; i < matches.length; i += 1) {
+    //     const currentMatchSize = matches[i].length;
+    //     for (let j = 0; j < currentMatchSize; j += 1) {
+    //       const currentMatchedTile = this.individualTile(matches[i][j]);
+    //       const currentXPos = currentMatchedTile[1];
+    //       const currentYPos = currentMatchedTile[2];
+
+    //       // replace the tile
+    //       const newTileType = this.getRandomTileType(1, 7);
+    //       allTiles[currentXPos][currentYPos].tileType = newTileType;
+    //       allTiles[currentXPos][currentYPos].tileIcon = this.getTileIcon(newTileType);
+
+    //       // initialize game board again
+    //       this.initializeAllTiles(allTiles);
+
+    //       // repeat the process of checking for and handling matches
+    //       this.handleAllMatches();
+    //     }
+    //   }
+    // },
+    isATileTypeMatch(tile1, tile2) {
+      return tile1.tileType === tile2.tileType;
+    },
+    isEndOfRow(rowPos) {
+      return rowPos + 1 === 8;
+    },
+    addToMainListIfFullMatch(currentList, mainList) {
+      if (currentList.length >= 3) {
+        mainList.push(currentList);
       }
     },
     findAllHorizMatches() {
       const allHorizMatches = [];
       let currentMatchSet = [];
       const { allTiles } = this;
-      let tileTypeToMatch;
       for (let i = 0; i < 8; i += 1) {
+        // add match if exists
+        this.addToMainListIfFullMatch(currentMatchSet, allHorizMatches);
+
+        // reset the currentMatchSet
         currentMatchSet = [];
-        tileTypeToMatch = allTiles[i][0].tileType;
-        currentMatchSet.push(allTiles[i][0].tileId);
+        let tileToMatch = allTiles[i][0];
+        if (tileToMatch.tileIcon !== '') {
+          currentMatchSet.push(tileToMatch.tileId);
+        }
+
         for (let j = 1; j < 8; j += 1) {
-          if (allTiles[i][j].tileType === tileTypeToMatch) {
-            currentMatchSet.push(allTiles[i][j].tileId);
-          } else {
-            if (currentMatchSet.length >= 3) {
-              allHorizMatches.push(currentMatchSet);
+          const tileToCheck = allTiles[i][j];
+          const isAMatch = this.isATileTypeMatch(tileToCheck, tileToMatch);
+          const isEndOfRow = this.isEndOfRow(j);
+
+          if (isAMatch) {
+            if (tileToMatch.tileIcon !== '') {
+              currentMatchSet.push(tileToCheck.tileId);
             }
+          } else if (!isAMatch && !isEndOfRow) {
+            // tile types not a match and not end of row
+            this.addToMainListIfFullMatch(currentMatchSet, allHorizMatches);
             currentMatchSet = [];
-            currentMatchSet.push(allTiles[i][j].tileId);
-            tileTypeToMatch = allTiles[i][j].tileType;
+            if (tileToMatch.tileIcon !== '') {
+              currentMatchSet.push(tileToCheck.tileId);
+            }
+            tileToMatch = tileToCheck;
+          } else if (!isAMatch && isEndOfRow && currentMatchSet.length >= 3) {
+            // tile types not a match and is end of row
+            allHorizMatches.push(currentMatchSet);
+            currentMatchSet = [];
           }
         }
       }
 
+      // add match if exists
+      this.addToMainListIfFullMatch(currentMatchSet, allHorizMatches);
+
       return allHorizMatches;
     },
-    findVertMatches() {
+    findAllVertMatches() {
       const allVertMatches = [];
       let currentMatchSet = [];
       const { allTiles } = this;
-      let tileTypeToMatch;
       for (let i = 0; i < 8; i += 1) {
+        // add match if exists
+        this.addToMainListIfFullMatch(currentMatchSet, allVertMatches);
+
+        // reset the currentMatchSet
         currentMatchSet = [];
-        tileTypeToMatch = allTiles[0][i].tileType;
-        currentMatchSet.push(allTiles[0][i].tileId);
+        let tileToMatch = allTiles[0][i];
+        if (tileToMatch.tileIcon !== '') {
+          currentMatchSet.push(tileToMatch.tileId);
+        }
+
         for (let j = 1; j < 8; j += 1) {
-          if (allTiles[j][i].tileType === tileTypeToMatch) {
-            currentMatchSet.push(allTiles[j][i].tileId);
-          } else {
-            if (currentMatchSet.length >= 3) {
-              allVertMatches.push(currentMatchSet);
+          const tileToCheck = allTiles[j][i];
+          const isAMatch = this.isATileTypeMatch(tileToCheck, tileToMatch);
+          const isEndOfRow = this.isEndOfRow(j);
+
+          if (isAMatch) {
+            if (tileToMatch.tileIcon !== '') {
+              currentMatchSet.push(tileToCheck.tileId);
             }
+          } else if (!isAMatch && !isEndOfRow) {
+            // tile types not a match and not end of row
+            this.addToMainListIfFullMatch(currentMatchSet, allVertMatches);
             currentMatchSet = [];
-            currentMatchSet.push(allTiles[j][i].tileId);
-            tileTypeToMatch = allTiles[j][i].tileType;
+            if (tileToMatch.tileIcon !== '') {
+              currentMatchSet.push(tileToCheck.tileId);
+            }
+            tileToMatch = tileToCheck;
+          } else if (!isAMatch && isEndOfRow && currentMatchSet.length >= 3) {
+            // tile types not a match and is end of row
+            allVertMatches.push(currentMatchSet);
+            currentMatchSet = [];
           }
         }
       }
+
+      // add match if exists
+      this.addToMainListIfFullMatch(currentMatchSet, allVertMatches);
 
       return allVertMatches;
     },

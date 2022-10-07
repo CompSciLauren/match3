@@ -25,6 +25,19 @@ export default createStore({
 
       return {};
     },
+    individualTileByPosId: (state) => (tilePosId: number) => {
+      for (let i = 0; i < 8; i += 1) {
+        for (let j = 0; j < 8; j += 1) {
+          // eslint-disable-next-line dot-notation
+          if (state.allTiles[i][j]['tilePosId'] === tilePosId) {
+            // eslint-disable-next-line dot-notation
+            return [state.allTiles[i][j], i, j];
+          }
+        }
+      }
+
+      return {};
+    },
   },
   mutations: {
     INIT_ALL_TILES(state, tiles) {
